@@ -1,0 +1,41 @@
+# Python #
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+*.egg
+
+# Virtual environment #
+venv/
+env/
+ENV/
+*.venv
+venv
+
+# Django #
+*.log
+db.sqlite3
+db.sqlite3-journal
+/media/
+staticfiles/
+
+
+# Secrets & Configs #
+.env
+*.ini
+config.json
+
+# Migrations #
+**/migrations/*.py
+!**/migrations/__init__.py
+
+# IDE / Editor #
+.vscode/
+.idea/
+*.sublime-workspace
+
+# macOS #
+.DS_Store
+
+# Windows #
+Thumbs.db
