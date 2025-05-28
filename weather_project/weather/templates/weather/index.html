@@ -1,0 +1,126 @@
+{% load weather_extras %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Forecast</title>
+  <link rel="stylesheet" href="{% static 'weather/main.css' %}">
+  <link rel="stylesheet" href="{% static 'weather/search.css' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Прогноз погоды</h1>
+      <p>Узнайте текущую погоду</p>
+      
+    </header>
+
+    <div class="search-container">
+      <form method="post">
+        {% csrf_token %}
+        <div class="search-box">
+          <div class="input-wrapper">
+            {{ form.city }}
+          </div>
+          <button type="submit" class="search-button">
+            <span class="search-text">Показать</span>
+            <span class="search-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.3-4.3"></path>
+              </svg>
+            </span>
+          </button>
+        </div>
+        <ul id="suggestions"></ul>
+        {% if last_city %}
+        <div class="popular-cities">
+          <span>Ранее вы искали:</span>
+          <button class="city-pill" onclick="document.getElementById('city-input').value='{{ last_city }}'; this.closest('form').submit();">{{ last_city }}</button>
+        </div>
+      {% endif %}
+      </form>
+      
+    </div>
+    {% if error %}   
+      <div class="error-container hide" id="error">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        <p>Произошла ошибка при загрузке данных. Пожалуйста, проверьте название города и попробуйте снова.</p>
+      </div>
+    {% endif %}
+
+    {% if weather %} 
+    <div class="weather-container" id="current-weather">
+      <div class="city-header">
+        <h2>{{ city }}</h2>
+        <span class="date">{{ weather.time|format_time }}</span>
+      </div>
+      
+      <div class="current-weather-card">
+        <div class="temperature">
+          <span class="temp-value">{{ weather.temperature|format_temp }}°C</span>
+        </div>
+        <div class="weather-details">
+          <div class="detail-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"></path><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"></path><path d="M8 9h8"></path><path d="M8 15h2"></path><path d="M14 15h2"></path></svg>
+            <span>Влажность: {{ weather.humidity }}%</span>
+          </div>
+          <div class="detail-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"></path><path d="M9.6 4.6A2 2 0 1 1 11 8H2"></path><path d="M12.6 19.4A2 2 0 1 0 14 16H2"></path></svg>
+            <span>Ветер: {{ weather.windspeed }} км/ч</span>
+          </div>
+
+          <div class="detail-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span>Давление: {{ weather.pressure|to_mm_hg }} мм рт.ст.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    <footer>
+      <p>© 2025 Weather Forecast. Все права защищены.</p>
+    </footer>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const input = document.querySelector("#city-input");
+        const suggestionBox = document.querySelector("#suggestions");
+    
+        input.addEventListener("input", function () {
+            const query = input.value;
+            if (query.length < 2) {
+                suggestionBox.innerHTML = "";
+                return;
+            }
+  
+            fetch(`/autocomplete/?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    suggestionBox.innerHTML = "";
+                    data.forEach(city => {
+                        const item = document.createElement("li");
+                        item.textContent = city;
+                        item.addEventListener("click", () => {
+                            input.value = city;
+                            suggestionBox.innerHTML = "";
+                        });
+                        suggestionBox.appendChild(item);
+                    });
+                });
+        });
+  
+        document.addEventListener("click", (e) => {
+            if (!e.target.closest(".search-box")) {
+                suggestionBox.innerHTML = "";
+            }
+        });
+    });
+    </script>
+</body>
+</html>

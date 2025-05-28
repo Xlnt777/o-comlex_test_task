@@ -1,0 +1,170 @@
+:root {
+    --primary-color: #1e88e5;
+    --primary-light: #6ab7ff;
+    --primary-dark: #005cb2;
+    --secondary-color: #ffa726;
+    --text-dark: #2d3748;
+    --text-light: #e2e8f0;
+    --text-muted: #718096;
+    --bg-light: #f8fafc;
+    --bg-dark: #1a202c;
+    --card-bg: rgba(255, 255, 255, 0.95);
+    --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    --border-radius: 12px;
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-xxl: 48px;
+    --transition-speed: 0.3s;
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-dark);
+    background: linear-gradient(135deg, #c9e4ff 0%, #e2f0ff 100%);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-xl);
+  }
+  
+  header {
+    text-align: center;
+    margin-bottom: var(--spacing-xxl);
+  }
+  
+  header h1 {
+    color: var(--primary-dark);
+    font-size: 2.5rem;
+    margin-bottom: var(--spacing-xs);
+    font-weight: 600;
+  }
+  
+  header p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+  }
+  
+  h3 {
+    color: var(--primary-dark);
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-lg);
+    font-weight: 500;
+  }
+  .input-wrapper {
+    position: relative;
+    flex: 1;
+  }
+  
+  .input-wrapper input {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  #suggestions {
+    position: absolute;
+    background: #ccc;
+    max-height: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-radius: 0 0 var(--border-radius, 6px) var(--border-radius, 6px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    z-index: 1111;
+}
+
+#suggestions li {
+    padding: var(--spacing-md, 8px);
+    cursor: pointer;
+    color: var(--text-dark);
+    background-color: var(--card-bg, white);
+}
+
+#suggestions li:hover,
+#suggestions li.active {
+    background-color: #f0f0f0;
+}
+  
+  .hide {
+    display: none;
+  }
+
+  .current-weather-card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-xl);
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .current-weather-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+    pointer-events: none;
+  }
+
+  .temperature {
+    text-align: center;
+    margin-bottom: var(--spacing-md);
+  }
+  .temp-value {
+    font-size: 3.5rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    line-height: 1;
+  }
+  
+  
+  footer {
+    text-align: center;
+    margin-top: var(--spacing-xxl);
+    padding-top: var(--spacing-lg);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  @media (max-width: 768px) {
+    .container {
+      padding: var(--spacing-md);
+    }
+    
+    header h1 {
+      font-size: 2rem;
+    }
+    
+    header p {
+      font-size: 1rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    header h1 {
+      font-size: 1.8rem;
+    }
+    
+    header p {
+      font-size: 0.9rem;
+    }
+  }
